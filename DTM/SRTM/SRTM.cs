@@ -12,6 +12,7 @@ namespace GeodeticEngine.DTM.SRTM
     {
         public string DataDirectory { get; private set; }
         private Dictionary<int, SRTMDataCell> DataCells { get; set; }
+        private List<string> SRTMFiles = new List<string>();
 
         public SRTM(string dataDirectory = "SRTM")
         {
@@ -21,6 +22,15 @@ namespace GeodeticEngine.DTM.SRTM
                 Directory.CreateDirectory(DataDirectory);
 
             DataCells = new Dictionary<int, SRTMDataCell>();
+
+            SRTMFiles.AddRange(Directory.GetFiles(DataDirectory));
+
+            USGSSource.DownloadCompleteEvent += OnDownloadCompleted;
+        }
+
+        private void OnDownloadCompleted(string localFile)
+        {
+            SRTMFiles.Add(localFile);
         }
 
         public void Unload()
@@ -73,27 +83,26 @@ namespace GeodeticEngine.DTM.SRTM
                 return ElevationResponse.ReturnInvalid(ElevationResponse.SOURCE.SRTM);
             }
 
-            var filePath = Path.Combine(DataDirectory, filename + ".hgt");
             var zipFilePath = Path.Combine(DataDirectory, filename + ".hgt.zip");
 
-            // Try Download
-            if (!File.Exists(filePath) && !File.Exists(zipFilePath))
-            {
-                USGSSource.GetMissingCell(DataDirectory, filename);
-            }
-            
             // Try Reading
-            if (File.Exists(filePath))
-            {
-                dataCell = SRTMDataCell.LoadDataCell(filePath);
-            }
-            else if (File.Exists(zipFilePath))
+            if (SRTMFiles.Contains(zipFilePath))
             {
                 dataCell = SRTMDataCell.LoadDataCell(zipFilePath);
+                if (dataCell == null)
+                {
+                    File.Delete(zipFilePath);
+                    SRTMFiles.Remove(zipFilePath);
+                }
+                    
             }
 
+            // Try Download
             if (dataCell == null)
+            {
+                USGSSource.GetMissingCell(DataDirectory, filename);
                 return ElevationResponse.ReturnInvalid(ElevationResponse.SOURCE.SRTM);
+            }
 
             // add to cells.
             DataCells.Add(cellID,dataCell);

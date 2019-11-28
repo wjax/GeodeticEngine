@@ -16,15 +16,15 @@ namespace GeodeticEngine.DTM.SRTM
             }
             catch (Exception e)
             {
-                if (!e.Message.Contains("it is being used by another process"))
-                {
-                    System.Diagnostics.Debug.WriteLine("Bad SRTM File");
-                    try
-                    {
-                        File.Delete(filepath);
-                    }
-                    finally { }
-                }
+                //if (!e.Message.Contains("it is being used by another process"))
+                //{
+                //    System.Diagnostics.Debug.WriteLine("Bad SRTM File");
+                //    try
+                //    {
+                //        File.Delete(filepath);
+                //    }
+                //    finally { }
+                //}
                 
             }
             return cell;

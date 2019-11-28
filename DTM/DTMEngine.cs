@@ -7,7 +7,7 @@ namespace GeodeticEngine.DTM
 {
     public class DTMEngine
     {
-        static Dictionary<ElevationResponse.SOURCE, ElevationProviderBase> ElevProviders = new Dictionary<ElevationResponse.SOURCE, ElevationProviderBase>();
+        static SortedDictionary<ElevationResponse.SOURCE, ElevationProviderBase> ElevProviders = new SortedDictionary<ElevationResponse.SOURCE, ElevationProviderBase>();
 
         static DTMEngine()
         {
@@ -34,7 +34,16 @@ namespace GeodeticEngine.DTM
         {
             ElevationResponse response;
 
-            if ((response = ElevProviders[source].GetElevation(latitude, longitude, interpolate)).TileType == ElevationResponse.TILE_TYPE.Valid)
+            if (source == ElevationResponse.SOURCE.UNKNOWN)
+            {
+                foreach (KeyValuePair<ElevationResponse.SOURCE, ElevationProviderBase> pair in ElevProviders)
+                {
+                    ElevationProviderBase p = pair.Value;
+                    if ((response = p.GetElevation(latitude, longitude, interpolate)).TileType == ElevationResponse.TILE_TYPE.Valid)
+                        return response;
+                }
+            }
+            else if((response = ElevProviders[source].GetElevation(latitude, longitude, interpolate)).TileType == ElevationResponse.TILE_TYPE.Valid)
                     return response;
 
             return ElevationResponse.ReturnInvalid(ElevationResponse.SOURCE.UNKNOWN);
@@ -42,4 +51,13 @@ namespace GeodeticEngine.DTM
 
 
     }
+
+    //public class ElevationSourceComparer : IComparer<ElevationResponse.SOURCE>
+    //{
+    //    // Compares by Height, Length, and Width.
+    //    public int Compare(ElevationResponse.SOURCE x, ElevationResponse.SOURCE y)
+    //    {
+    //        if (x == ElevationResponse.SOURCE.ASC)
+    //    }
+    //}
 }

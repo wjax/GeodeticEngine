@@ -126,7 +126,7 @@ namespace GeodeticEngine.Geodetic
         }
 
         // RPY in NED
-        public static (double Lat, double Lon, double Alt) getIntersectionWithTerrain(double startLat, double startLon, double startAlt, double bearing, double pitch, int maxDistance, int stepSize = 50)
+        public static (double Lat, double Lon, double Alt) getIntersectionWithTerrain(double startLat, double startLon, double startAlt, double bearing, double pitch, int maxDistance, int stepSize, ElevationResponse.SOURCE source = ElevationResponse.SOURCE.UNKNOWN)
         {
             int distout = 0;
             double LatOut, LonOut, AltOut;
@@ -144,7 +144,7 @@ namespace GeodeticEngine.Geodetic
                 AltOut = AltPrev - stepSize * Math.Tan(radPitch);
 
                 // Get TerrainElevation on this point
-                ElevationSurface = DTMEngine.GetElevation(LatOut, LonOut, ElevationResponse.SOURCE.ASC);
+                ElevationSurface = DTMEngine.GetElevation(LatOut, LonOut, source);
 
                 if (ElevationSurface.TileType != ElevationResponse.TILE_TYPE.Valid)
                     return (0,0,0);
@@ -155,7 +155,7 @@ namespace GeodeticEngine.Geodetic
                     if (stepSize < MIN_STEP)
                         return (LatOut, LonOut, AltOut);
                     else
-                        return getIntersectionWithTerrain(LatPrev, LonPrev, AltPrev, bearing, pitch, stepSize , stepSize / 2);
+                        return getIntersectionWithTerrain(LatPrev, LonPrev, AltPrev, bearing, pitch, maxDistance - stepSize, stepSize / 2);
                 }
 
                 LatPrev = LatOut;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace GeodeticEngine.Geodetic
 {
@@ -20,14 +21,17 @@ namespace GeodeticEngine.Geodetic
         private static float cellSizeMeters = 0;
         private static double cellSizeDeg = 0;
 
+        private static bool ready = false;
+
         static Geoid()
         {
-            Load();
+            Task.Run (() => Load());
         }
 
         public static void Load(string path = @"GeodeticResources\egm96.asc")
         {
             Cache = ReadFileToCache(path);
+            ready = true;
         }
 
         private static float[,] ReadFileToCache(string filepath)
@@ -129,6 +133,9 @@ namespace GeodeticEngine.Geodetic
 
         public static float GetUndulation(double lat, double lon, bool interpolate = false)
         {
+            if (!ready)
+                return float.MinValue;
+
             double lonW = Tools.MathHelper.WrapAngle360(lon);
 
             double diffX = Math.Abs(lonW - left);

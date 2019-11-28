@@ -4,6 +4,9 @@
     {
         public const string SOURCE = @"https://dds.cr.usgs.gov/srtm/version2_1/SRTM3/";
 
+        public delegate void DownloadCompleteDelegate(string localFile);
+        public static event DownloadCompleteDelegate DownloadCompleteEvent;
+
         public static string[] CONTINENTS = new string[]
         {
             "Africa",
@@ -13,6 +16,16 @@
             "North_America",
             "South_America"
         };
+
+        static USGSSource()
+        {
+            Tools.Network.Downloader.DownloadCompleteEvent += OnDownloadCompleted;
+        }
+
+        private static void OnDownloadCompleted(string localFile)
+        {
+            DownloadCompleteEvent?.Invoke(localFile);
+        }
 
         public static void GetMissingCell(string path, string name)
         {

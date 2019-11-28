@@ -17,11 +17,11 @@ namespace GeodeticEngine.DTM
             Ocean
         }
 
-        public enum SOURCE
+        public enum SOURCE : byte
         {
-            UNKNOWN,
-            SRTM,
-            ASC
+            UNKNOWN = 2,
+            SRTM = 1,
+            ASC = 0
         }
 
 

@@ -1,5 +1,4 @@
-﻿using CoordinateSharp;
-using GeodeticEngine.Geodetic;
+﻿using GeodeticEngine.Geodetic;
 using System;
 using System.Globalization;
 using System.IO;
