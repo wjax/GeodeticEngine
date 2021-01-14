@@ -129,6 +129,9 @@ namespace GeodeticEngine.Geodetic
         public static (double Lat, double Lon, double Alt) getIntersectionWithTerrain(double startLat, double startLon, double startAlt, double bearing, double pitch, int maxDistance, int stepSize, ElevationResponse.SOURCE source = ElevationResponse.SOURCE.UNKNOWN)
         {
             int distout = 0;
+            double hypotenuse = 0;
+            double horizontalDistance = 0;
+            double verticalDistance = 0;
             double LatOut, LonOut, AltOut;
             double radPitch = -( pitch * deg2rad);
             double LatPrev = startLat;
@@ -139,9 +142,13 @@ namespace GeodeticEngine.Geodetic
 
             while (distout <= maxDistance)
             {
+                // Step applies to Hypotenuse
+                hypotenuse = stepSize;
+                horizontalDistance = hypotenuse * Math.Cos(radPitch);
+                verticalDistance = hypotenuse * Math.Sin(radPitch);
                 // Get new point
-                (LatOut, LonOut) = MovePointByBearing(LatPrev, LonPrev, bearing, stepSize);
-                AltOut = AltPrev - stepSize * Math.Tan(radPitch);
+                (LatOut, LonOut) = MovePointByBearing(LatPrev, LonPrev, bearing, horizontalDistance);
+                AltOut = AltPrev - verticalDistance;//stepSize * Math.Tan(radPitch);
 
                 // Get TerrainElevation on this point
                 ElevationSurface = DTMEngine.GetElevation(LatOut, LonOut, source);
@@ -168,6 +175,6 @@ namespace GeodeticEngine.Geodetic
             return (0, 0, 0);
         }
 
-        
+
     }
 }

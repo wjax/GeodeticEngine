@@ -20,9 +20,9 @@ namespace GeodeticEngine.DTM
         {
             ElevationResponse response;
 
-            foreach (KeyValuePair< ElevationResponse.SOURCE, ElevationProviderBase> kv in ElevProviders)
+            foreach (ElevationProviderBase p in ElevProviders.Values)
             {
-                if ((response = kv.Value.GetElevation(latitude, longitude, interpolate)).TileType == ElevationResponse.TILE_TYPE.Valid)
+                if ((response = p.GetElevation(latitude, longitude, interpolate)).TileType == ElevationResponse.TILE_TYPE.Valid)
                     return response;
             }
 
