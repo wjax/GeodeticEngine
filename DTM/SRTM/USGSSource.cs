@@ -2,7 +2,9 @@
 {
     public class USGSSource
     {
-        public const string SOURCE = @"https://dds.cr.usgs.gov/srtm/version2_1/SRTM3/";
+        //public const string SOURCE = @"https://dds.cr.usgs.gov/srtm/version2_1/SRTM3/";
+        public const string SOURCE = @"https://firmware.ardupilot.org/SRTM/";
+        
 
         public delegate void DownloadCompleteDelegate(string localFile);
         public static event DownloadCompleteDelegate DownloadCompleteEvent;
