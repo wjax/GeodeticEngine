@@ -1,5 +1,6 @@
 ﻿using GeodeticEngine.DTM;
 using System;
+using System.Collections.Generic;
 
 namespace GeodeticEngine.Geodetic
 {
@@ -175,6 +176,39 @@ namespace GeodeticEngine.Geodetic
             return (0, 0, 0);
         }
 
+        public static bool PointInPolygon(IList<double> polyX, IList<double> polyY, double x, double y, int polyCorners)
+        {
+            int index = polyCorners - 1;
+            bool flag = false;
+            for (int i = 0; i < polyCorners; i++)
+            {
+                if (((polyY[i] < y && polyY[index] >= y) || (polyY[index] < y && polyY[i] >= y)) && (polyX[i] <= x || polyX[index] <= x))
+                {
+                    flag ^= polyX[i] + (y - polyY[i]) / (polyY[index] - polyY[i]) * (polyX[index] - polyX[i]) < x;
+                }
+                index = i;
+            }
+            return flag;
+        }
 
+        public static bool PointInPolygon3D(IList<double> polyX, IList<double> polyY, double polyZ, double x, double y, double z)
+        {
+            int count = polyX.Count;
+            int index = count - 1;
+            bool flag = false;
+            for (int i = 0; i < count; i++)
+            {
+                if (((polyY[i] < y && polyY[index] >= y) || (polyY[index] < y && polyY[i] >= y)) && (polyX[i] <= x || polyX[index] <= x))
+                {
+                    flag ^= polyX[i] + (y - polyY[i]) / (polyY[index] - polyY[i]) * (polyX[index] - polyX[i]) < x;
+                }
+                index = i;
+            }
+            if (!(z < polyZ))
+            {
+                return false;
+            }
+            return flag;
+        }
     }
 }
