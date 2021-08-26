@@ -1,4 +1,5 @@
-﻿using GeodeticEngine.DTM;
+﻿using Geodesy;
+using GeodeticEngine.DTM;
 using System;
 using System.Collections.Generic;
 
@@ -10,6 +11,15 @@ namespace GeodeticEngine.Geodetic
         private const double rad2deg = 180 / Math.PI;
         private const double radius_of_earth = 6378100.0;//# in meters
         private const int MIN_STEP = 4;
+
+        static GeodeticCalculator calc = new GeodeticCalculator(Ellipsoid.WGS84);
+
+        public static (double latout, double lonout) MovePointByBearingHighPrecision(double Lat, double Lon, double bearing, double distance)
+        {
+            var destination = calc.CalculateEndingGlobalCoordinates(new GlobalCoordinates(new Angle(Lat), new Angle(Lon)), new Angle(bearing), distance);
+
+            return (destination.Latitude.Degrees, destination.Longitude.Degrees);
+        }
 
         public static (double latout, double lonout) MovePointByBearing(double Lat, double Lon, double bearing, double distance)
         {
