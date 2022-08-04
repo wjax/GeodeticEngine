@@ -22,6 +22,7 @@ namespace GeodeticEngine.Geodetic
         private static double cellSizeDeg = 0;
 
         private static bool ready = false;
+        public static bool Ready { get { return ready; } }
 
         static Geoid()
         {

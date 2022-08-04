@@ -176,12 +176,12 @@ namespace GeodeticEngine.DTM.SRTM
             int y = (int)Math.Floor(lat);
 
             // remove base
-            lat -= y;
-            lon -= x;
+            var latAux = lat - y;
+            var lonAux = lon - x;
 
             // values should be 0-1199, 1200 is for interpolation
-            double xf = lon * (PointsPerCell - 1);
-            double yf = lat * (PointsPerCell - 1);
+            double xf = lonAux * (PointsPerCell - 1);
+            double yf = latAux * (PointsPerCell - 1);
 
             int x_int = (int)xf;
             float x_frac = (float)(xf - x_int);

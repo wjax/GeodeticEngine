@@ -137,7 +137,7 @@ namespace GeodeticEngine.Geodetic
         }
 
         // RPY in NED
-        public static (double Lat, double Lon, double Alt) getIntersectionWithTerrain(double startLat, double startLon, double startAlt, double bearing, double pitch, int maxDistance, int stepSize, ElevationResponse.SOURCE source = ElevationResponse.SOURCE.UNKNOWN)
+        public static (double Lat, double Lon, double Alt, ElevationResponse.SOURCE) getIntersectionWithTerrain(double startLat, double startLon, double startAlt, double bearing, double pitch, int maxDistance, int stepSize, ElevationResponse.SOURCE source = ElevationResponse.SOURCE.UNKNOWN)
         {
             int distout = 0;
             double hypotenuse = 0;
@@ -165,13 +165,13 @@ namespace GeodeticEngine.Geodetic
                 ElevationSurface = DTMEngine.GetElevation(LatOut, LonOut, source);
 
                 if (ElevationSurface.TileType != ElevationResponse.TILE_TYPE.Valid)
-                    return (0,0,0);
+                    return (0,0,0, ElevationSurface.Source);
 
                 // Surface intersection
                 if (ElevationSurface.GetElevation() > AltOut)
                 {
                     if (stepSize < MIN_STEP)
-                        return (LatOut, LonOut, AltOut);
+                        return (LatOut, LonOut, AltOut, ElevationSurface.Source);
                     else
                         return getIntersectionWithTerrain(LatPrev, LonPrev, AltPrev, bearing, pitch, maxDistance - stepSize, stepSize / 2);
                 }
@@ -183,7 +183,7 @@ namespace GeodeticEngine.Geodetic
                 distout += stepSize;
             }
 
-            return (0, 0, 0);
+            return (0, 0, 0, ElevationResponse.SOURCE.UNKNOWN);
         }
 
         public static bool PointInPolygon(IList<double> polyX, IList<double> polyY, double x, double y, int polyCorners)
