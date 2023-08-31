@@ -15,7 +15,7 @@ namespace GeodeticEngine.DTM.SRTM
         private double centerY = 0;
         private double top = 0;
         private double left = 0;
-        private int noData = -9999;
+        private float noData = -9999;
         private float cellSizeMeters = 0;
         private double cellSizeDeg = 0;
 
@@ -124,7 +124,7 @@ namespace GeodeticEngine.DTM.SRTM
                     }
                     else if (line.StartsWith("NODATA_value", true, CultureInfo.InvariantCulture))
                     {
-                        noData = int.Parse(line.Substring(line.IndexOf(' ')));
+                        noData = float.Parse(line.Substring(line.IndexOf(' ')));
                     }
                     else
                         break;
