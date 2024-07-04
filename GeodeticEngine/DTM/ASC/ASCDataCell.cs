@@ -104,27 +104,27 @@ namespace GeodeticEngine.DTM.SRTM
                     }
                     else if (line.StartsWith("xllcorner", true, CultureInfo.InvariantCulture))
                     {
-                        left = double.Parse(line.Substring(line.IndexOf(' ')));
+                        left = double.Parse(line.Substring(line.IndexOf(' ')), NumberStyles.Any, CultureInfo.InvariantCulture);
                     }
                     else if (line.StartsWith("yllcorner", true, CultureInfo.InvariantCulture))
                     {
-                        top = double.Parse(line.Substring(line.IndexOf(' ')));
+                        top = double.Parse(line.Substring(line.IndexOf(' ')), NumberStyles.Any, CultureInfo.InvariantCulture);
                     }
                     else if (line.StartsWith("xllcenter", true, CultureInfo.InvariantCulture))
                     {
-                        centerX = double.Parse(line.Substring(line.IndexOf(' ')));
+                        centerX = double.Parse(line.Substring(line.IndexOf(' ')), NumberStyles.Any, CultureInfo.InvariantCulture);
                     }
                     else if (line.StartsWith("yllcenter", true, CultureInfo.InvariantCulture))
                     {
-                        centerY = float.Parse(line.Substring(line.IndexOf(' ')));
+                        centerY = float.Parse(line.Substring(line.IndexOf(' ')), NumberStyles.Any, CultureInfo.InvariantCulture);
                     }
                     else if (line.StartsWith("cellsize", true, CultureInfo.InvariantCulture))
                     {
-                        cellSizeMeters = float.Parse(line.Substring(line.IndexOf(' ')));
+                        cellSizeMeters = float.Parse(line.Substring(line.IndexOf(' ')), NumberStyles.Any, CultureInfo.InvariantCulture);
                     }
                     else if (line.StartsWith("NODATA_value", true, CultureInfo.InvariantCulture))
                     {
-                        noData = float.Parse(line.Substring(line.IndexOf(' ')));
+                        noData = float.Parse(line.Substring(line.IndexOf(' ')), NumberStyles.Any, CultureInfo.InvariantCulture);
                     }
                     else
                         break;
