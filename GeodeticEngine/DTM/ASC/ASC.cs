@@ -1,16 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 
-namespace GeodeticEngine.DTM.SRTM
-{
-    public class ASC : ElevationProviderBase
-    {
-        public string DataDirectory { get; private set; }
-        private Dictionary<string, ASCDataCell> DataCells { get; set; }
-        private string[] AscFilePaths;
+namespace GeodeticEngine.DTM.ASC;
 
-        public ASC(string dataDirectory = "ASC")
-        {
+public class ASC : ElevationProviderBase
+{
+    public string DataDirectory { get; private set; }
+    private Dictionary<string, ASCDataCell> DataCells { get; set; }
+    private string[] AscFilePaths;
+
+    public ASC(string dataDirectory = "ASC")
+    {
             DataDirectory = Tools.MTools.AbsolutizePath(dataDirectory);
 
             if (!Directory.Exists(DataDirectory))
@@ -22,13 +22,13 @@ namespace GeodeticEngine.DTM.SRTM
             AscFilePaths = Directory.GetFiles(DataDirectory);
         }
 
-        public void Unload()
-        {
+    public void Unload()
+    {
             DataCells.Clear();
         }
 
-        public ElevationResponse GetElevation(double latitude, double longitude, bool interpolate = false)
-        {
+    public ElevationResponse GetElevation(double latitude, double longitude, bool interpolate = false)
+    {
             ElevationResponse elevResponse = null;
 
             // Look in every file in the ASC folder
@@ -56,5 +56,4 @@ namespace GeodeticEngine.DTM.SRTM
 
             return ElevationResponse.ReturnInvalid(ElevationResponse.SOURCE.ASC);
         }
-    }
 }

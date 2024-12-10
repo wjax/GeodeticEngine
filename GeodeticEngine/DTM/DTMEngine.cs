@@ -3,21 +3,22 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace GeodeticEngine.DTM
+namespace GeodeticEngine.DTM;
+
+public class DTMEngine
 {
-    public class DTMEngine
+    static SortedDictionary<ElevationResponse.SOURCE, ElevationProviderBase> ElevProviders = new SortedDictionary<ElevationResponse.SOURCE, ElevationProviderBase>();
+
+    static DTMEngine()
     {
-        static SortedDictionary<ElevationResponse.SOURCE, ElevationProviderBase> ElevProviders = new SortedDictionary<ElevationResponse.SOURCE, ElevationProviderBase>();
-
-        static DTMEngine()
-        {
-            ElevProviders.Add(ElevationResponse.SOURCE.ASC, new SRTM.ASC());
+            ElevProviders.Add(ElevationResponse.SOURCE.GEOTIFF, new GeoTIFF.GeoTIFF());
+            ElevProviders.Add(ElevationResponse.SOURCE.ASC, new ASC.ASC());
             ElevProviders.Add(ElevationResponse.SOURCE.SRTM, new SRTM.SRTM());
-        }
+    }
 
-        //[MethodImpl(MethodImplOptions.Synchronized)]
-        public static ElevationResponse GetElevation(double latitude, double longitude, bool interpolate = false)
-        {
+    //[MethodImpl(MethodImplOptions.Synchronized)]
+    public static ElevationResponse GetElevation(double latitude, double longitude, bool interpolate = false)
+    {
             ElevationResponse response;
 
             foreach (KeyValuePair< ElevationResponse.SOURCE, ElevationProviderBase> kv in ElevProviders)
@@ -29,9 +30,9 @@ namespace GeodeticEngine.DTM
             return ElevationResponse.ReturnInvalid(ElevationResponse.SOURCE.UNKNOWN);
         }
 
-        //[MethodImpl(MethodImplOptions.Synchronized)]
-        public static ElevationResponse GetElevation(double latitude, double longitude, ElevationResponse.SOURCE source, bool interpolate = false)
-        {
+    //[MethodImpl(MethodImplOptions.Synchronized)]
+    public static ElevationResponse GetElevation(double latitude, double longitude, ElevationResponse.SOURCE source, bool interpolate = false)
+    {
             ElevationResponse response;
 
             if (source == ElevationResponse.SOURCE.UNKNOWN)
@@ -50,14 +51,13 @@ namespace GeodeticEngine.DTM
         }
 
 
-    }
-
-    //public class ElevationSourceComparer : IComparer<ElevationResponse.SOURCE>
-    //{
-    //    // Compares by Height, Length, and Width.
-    //    public int Compare(ElevationResponse.SOURCE x, ElevationResponse.SOURCE y)
-    //    {
-    //        if (x == ElevationResponse.SOURCE.ASC)
-    //    }
-    //}
 }
+
+//public class ElevationSourceComparer : IComparer<ElevationResponse.SOURCE>
+//{
+//    // Compares by Height, Length, and Width.
+//    public int Compare(ElevationResponse.SOURCE x, ElevationResponse.SOURCE y)
+//    {
+//        if (x == ElevationResponse.SOURCE.ASC)
+//    }
+//}

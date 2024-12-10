@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace GeodeticEngine.Geodetic
+namespace GeodeticEngine.Geodetic;
+
+public class ElevationConverter
 {
-    public class ElevationConverter
-    {
-        //Geoid goid = new Geoid("EGM96-5", )
-    }
+    //Geoid goid = new Geoid("EGM96-5", )
 }

@@ -3,26 +3,26 @@ using GeodeticEngine.DTM;
 using System;
 using System.Collections.Generic;
 
-namespace GeodeticEngine.Geodetic
+namespace GeodeticEngine.Geodetic;
+
+public class Calculator
 {
-    public class Calculator
+    private const double deg2rad = Math.PI / 180;
+    private const double rad2deg = 180 / Math.PI;
+    private const double radius_of_earth = 6378100.0;//# in meters
+    private const int MIN_STEP = 4;
+
+    static GeodeticCalculator calc = new GeodeticCalculator(Ellipsoid.WGS84);
+
+    public static (double latout, double lonout) MovePointByBearingHighPrecision(double Lat, double Lon, double bearing, double distance)
     {
-        private const double deg2rad = Math.PI / 180;
-        private const double rad2deg = 180 / Math.PI;
-        private const double radius_of_earth = 6378100.0;//# in meters
-        private const int MIN_STEP = 4;
-
-        static GeodeticCalculator calc = new GeodeticCalculator(Ellipsoid.WGS84);
-
-        public static (double latout, double lonout) MovePointByBearingHighPrecision(double Lat, double Lon, double bearing, double distance)
-        {
             var destination = calc.CalculateEndingGlobalCoordinates(new GlobalCoordinates(new Angle(Lat), new Angle(Lon)), new Angle(bearing), distance);
 
             return (destination.Latitude.Degrees, destination.Longitude.Degrees);
         }
 
-        public static (double latout, double lonout) MovePointByBearing(double Lat, double Lon, double bearing, double distance)
-        {
+    public static (double latout, double lonout) MovePointByBearing(double Lat, double Lon, double bearing, double distance)
+    {
             double lat1 = deg2rad * (Lat);
             double lon1 = deg2rad * (Lon);
             double brng = deg2rad * (bearing);
@@ -39,16 +39,16 @@ namespace GeodeticEngine.Geodetic
             return (latout, lngout);
         }
 
-        // Move a point a number of meters
-        public static (double latout, double lonout) MovePointByMeters(double Lat, double Lon, double east, double north)
-        {
+    // Move a point a number of meters
+    public static (double latout, double lonout) MovePointByMeters(double Lat, double Lon, double east, double north)
+    {
             double bearing = Math.Atan2(east, north) * rad2deg;
             double distance = Math.Sqrt(Math.Pow(east, 2) + Math.Pow(north, 2));
             return MovePointByBearing(Lat, Lon, bearing, distance);
         }
 
-        public static double GetBearingBAD(double Lat1, double Lon1, double Lat2, double Lon2, double offset = 0)
-        {
+    public static double GetBearingBAD(double Lat1, double Lon1, double Lat2, double Lon2, double offset = 0)
+    {
             double latitude1 = deg2rad * (Lat1);
             double latitude2 = deg2rad * (Lat2);
             double longitudeDifference = deg2rad * (Lon2 - Lon1);
@@ -61,8 +61,8 @@ namespace GeodeticEngine.Geodetic
             return (rad2deg * angle_raw + 360) % 360;
         }
 
-        public static double GetBearing(double Lat1, double Lon1, double Lat2, double Lon2, double offset = 0)
-        {
+    public static double GetBearing(double Lat1, double Lon1, double Lat2, double Lon2, double offset = 0)
+    {
             double latitude1 = deg2rad * (Lat1);
             double latitude2 = deg2rad * (Lat2);
             double longitudeDifference = deg2rad * (Lon2 - Lon1);
@@ -74,15 +74,15 @@ namespace GeodeticEngine.Geodetic
 
             return (angle_raw_deg + offset + 360) % 360;
         }
-        public static double GetElevationAngle(double Lat1, double Lon1, double Alt1, double Lat2, double Lon2, double Alt2)
-        {
+    public static double GetElevationAngle(double Lat1, double Lon1, double Alt1, double Lat2, double Lon2, double Alt2)
+    {
             double distance = GetDistanceEquiRectangular(Lat1, Lon1, Lat2, Lon2);
 
             return Math.Atan2((Alt2 - Alt1), distance) * rad2deg;
         }
 
-        public static double GetElevationAngle2(double Lat1, double Lon1, double Alt1, double Lat2, double Lon2, double Alt2)
-        {
+    public static double GetElevationAngle2(double Lat1, double Lon1, double Alt1, double Lat2, double Lon2, double Alt2)
+    {
             double rLat1 = Lat1 * deg2rad;
             double rLat2 = Lat2 * deg2rad;
             double rLon1 = Lon1 * deg2rad;
@@ -103,13 +103,13 @@ namespace GeodeticEngine.Geodetic
         }
 
 
-        public static (double, double) GetBearingAndElevation(double Lat1, double Lon1, double Alt1, double Lat2, double Lon2, double Alt2)
-        {
+    public static (double, double) GetBearingAndElevation(double Lat1, double Lon1, double Alt1, double Lat2, double Lon2, double Alt2)
+    {
             return (GetBearing(Lat1, Lon1, Lat2, Lon2), GetElevationAngle(Lat1, Lon1, Alt1, Lat2, Lon2, Alt2));
         }
 
-        public static double GetDistance(double Lat1, double Lon1, double Lat2, double Lon2)
-        {
+    public static double GetDistance(double Lat1, double Lon1, double Lat2, double Lon2)
+    {
             double d = Lat1 * 0.017453292519943295;
             double num2 = Lon1 * 0.017453292519943295;
             double num3 = Lat2 * 0.017453292519943295;
@@ -122,8 +122,8 @@ namespace GeodeticEngine.Geodetic
             // this should be radius_of_earth
         }
 
-        public static double GetDistanceEquiRectangular(double Lat1, double Lon1, double Lat2, double Lon2)
-        {
+    public static double GetDistanceEquiRectangular(double Lat1, double Lon1, double Lat2, double Lon2)
+    {
             double rLat1 = Lat1 * deg2rad;
             double rLat2 = Lat2 * deg2rad;
             double rLon1 = Lon1 * deg2rad;
@@ -136,9 +136,9 @@ namespace GeodeticEngine.Geodetic
             return d;
         }
 
-        // RPY in NED
-        public static (double Lat, double Lon, double Alt, ElevationResponse.SOURCE) getIntersectionWithTerrain(double startLat, double startLon, double startAlt, double bearing, double pitch, int maxDistance, int stepSize, ElevationResponse.SOURCE source = ElevationResponse.SOURCE.UNKNOWN)
-        {
+    // RPY in NED
+    public static (double Lat, double Lon, double Alt, ElevationResponse.SOURCE) getIntersectionWithTerrain(double startLat, double startLon, double startAlt, double bearing, double pitch, int maxDistance, int stepSize, ElevationResponse.SOURCE source = ElevationResponse.SOURCE.UNKNOWN)
+    {
             int distout = 0;
             double hypotenuse = 0;
             double horizontalDistance = 0;
@@ -186,8 +186,8 @@ namespace GeodeticEngine.Geodetic
             return (0, 0, 0, ElevationResponse.SOURCE.UNKNOWN);
         }
 
-        public static bool PointInPolygon(IList<double> polyX, IList<double> polyY, double x, double y, int polyCorners)
-        {
+    public static bool PointInPolygon(IList<double> polyX, IList<double> polyY, double x, double y, int polyCorners)
+    {
             int index = polyCorners - 1;
             bool flag = false;
             for (int i = 0; i < polyCorners; i++)
@@ -201,8 +201,8 @@ namespace GeodeticEngine.Geodetic
             return flag;
         }
 
-        public static bool PointInPolygon3D(IList<double> polyX, IList<double> polyY, double polyZ, double x, double y, double z)
-        {
+    public static bool PointInPolygon3D(IList<double> polyX, IList<double> polyY, double polyZ, double x, double y, double z)
+    {
             int count = polyX.Count;
             int index = count - 1;
             bool flag = false;
@@ -220,5 +220,4 @@ namespace GeodeticEngine.Geodetic
             }
             return flag;
         }
-    }
 }

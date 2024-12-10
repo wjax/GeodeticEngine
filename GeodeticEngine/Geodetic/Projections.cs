@@ -2,55 +2,55 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace GeodeticEngine.Geodetic
+namespace GeodeticEngine.Geodetic;
+
+public static class Projections
 {
-    public static class Projections
+    #region const
+    private const double equatorial_radius = 6378137.0;
+    private const double inverse_flattening = 298.257223563;
+    private const double a = equatorial_radius;
+    private const double f = 1.0 / inverse_flattening;
+    private const double b = a * (1 - f);   // polar radius
+
+    private static double e = Math.Sqrt(1 - Math.Pow(b, 2) / Math.Pow(a, 2));
+    private static double e0 = e / Math.Sqrt(1 - Math.Pow(e, 1));
+
+    private const double drad = Math.PI / 180;
+    private const double k0 = 0.9996;
+
+    private const double esq = (1 - (b / a) * (b / a));
+    private static double e0sq = e * e / (1 - Math.Pow(e, 2));
+
+    //
+
+    private const double sm_a = equatorial_radius;
+    private const double sm_b = equatorial_radius * (1 - (f)); //Polar Radius
+    //private const double flattening = 1 / inverse_flattening;
+
+    private const double deg2rad = Math.PI / 180;
+    private const double rad2deg = 180 / Math.PI;
+
+    #endregion
+
+
+
+    public struct UTMPosition
     {
-        #region const
-        private const double equatorial_radius = 6378137.0;
-        private const double inverse_flattening = 298.257223563;
-        private const double a = equatorial_radius;
-        private const double f = 1.0 / inverse_flattening;
-        private const double b = a * (1 - f);   // polar radius
+        public string latZone;
+        public int lonZone;
+        public double easting;
+        public double northing;
+    }
 
-        private static double e = Math.Sqrt(1 - Math.Pow(b, 2) / Math.Pow(a, 2));
-        private static double e0 = e / Math.Sqrt(1 - Math.Pow(e, 1));
-
-        private const double drad = Math.PI / 180;
-        private const double k0 = 0.9996;
-
-        private const double esq = (1 - (b / a) * (b / a));
-        private static double e0sq = e * e / (1 - Math.Pow(e, 2));
-
-        //
-
-        private const double sm_a = equatorial_radius;
-        private const double sm_b = equatorial_radius * (1 - (f)); //Polar Radius
-        //private const double flattening = 1 / inverse_flattening;
-
-        private const double deg2rad = Math.PI / 180;
-        private const double rad2deg = 180 / Math.PI;
-
-        #endregion
-
-
-
-        public struct UTMPosition
-        {
-            public string latZone;
-            public int lonZone;
-            public double easting;
-            public double northing;
-        }
-
-        public struct LatLonPosition
-        {
-            public double lat;
-            public double lon;
-        }
+    public struct LatLonPosition
+    {
+        public double lat;
+        public double lon;
+    }
         
-        private static string getUtmLetterDesignator(double latitude)
-        {
+    private static string getUtmLetterDesignator(double latitude)
+    {
             if ((84 >= latitude) && (latitude >= 72))
                 return "X";
             else if ((72 > latitude) && (latitude >= 64))
@@ -95,8 +95,8 @@ namespace GeodeticEngine.Geodetic
                 return "Z";
         }
 
-        public static UTMPosition ToUTM2(double latitude, double longitude)
-        {
+    public static UTMPosition ToUTM2(double latitude, double longitude)
+    {
             double a = 6378137;
             double eccSquared = 0.00669438;
 
@@ -175,8 +175,8 @@ namespace GeodeticEngine.Geodetic
             return toReturn;
         }
 
-        public static UTMPosition ToUTM(double lat, double lon)
-        {
+    public static UTMPosition ToUTM(double lat, double lon)
+    {
             string letter = "";
             double easting = 0;
             double northing = 0;
@@ -276,8 +276,8 @@ namespace GeodeticEngine.Geodetic
             return toReturn;
         }
 
-        public static LatLonPosition ToLatLong(double x, double y, double zone, string latZone)
-        {
+    public static LatLonPosition ToLatLong(double x, double y, double zone, string latZone)
+    {
             //x easting
             //y northing
             bool southhemi = false;
@@ -329,8 +329,9 @@ namespace GeodeticEngine.Geodetic
             tf2 = tf * tf;
             tf4 = tf2 * tf2;
 
-            /* Precalculate fractional coefficients for x**n in the equations
-               below to simplify the expressions for latitude and longitude. */
+           /* Precalculate fractional coefficients for x**n in the equations
+
+               elow to simplify the expressions for latitude and longitude. */
             x1frac = 1.0 / (Nfpow * cf);
 
             Nfpow *= Nf;   /* now equals Nf**2) */
@@ -354,8 +355,9 @@ namespace GeodeticEngine.Geodetic
             Nfpow *= Nf;   /* now equals Nf**8) */
             x8frac = tf / (40320.0 * Nfpow);
 
-            /* Precalculate polynomial coefficients for x**n.
-               -- x**1 does not have a polynomial coefficient. */
+           /* Precalculate polynomial coefficients for x**n.
+
+               - x**1 does not have a polynomial coefficient. */
             x2poly = -1.0 - nuf2;
 
             x3poly = -1.0 - 2 * tf2 - nuf2;
@@ -405,8 +407,8 @@ namespace GeodeticEngine.Geodetic
             return pos;
         }
 
-        private static double FootpointLatitude(double y)
-        {
+    private static double FootpointLatitude(double y)
+    {
             double y_, alpha_, beta_, gamma_, delta_, epsilon_, n;
             double result;
 
@@ -443,5 +445,4 @@ namespace GeodeticEngine.Geodetic
 
             return result;
         }
-    }
 }

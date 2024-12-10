@@ -1,46 +1,47 @@
 ﻿using GeodeticEngine.Geodetic;
 
-namespace GeodeticEngine.DTM
+namespace GeodeticEngine.DTM;
+
+public enum ELEVATION_TYPE
 {
-    public enum ELEVATION_TYPE
+    EGM96,
+    ELLIPSOIDAL
+}
+
+public class ElevationResponse
+{
+    public enum TILE_TYPE
     {
-        EGM96,
-        ELLIPSOIDAL
+        Valid,
+        Invalid,
+        Ocean
     }
 
-    public class ElevationResponse
+    public enum SOURCE : byte
     {
-        public enum TILE_TYPE
-        {
-            Valid,
-            Invalid,
-            Ocean
-        }
-
-        public enum SOURCE : byte
-        {
-            UNKNOWN = 2,
-            SRTM = 1,
-            ASC = 0
-        }
+        UNKNOWN = 3,
+        SRTM = 2,
+        ASC = 1,
+        GEOTIFF = 0
+    }
 
 
-        public TILE_TYPE TileType = TILE_TYPE.Invalid;
-        public SOURCE Source = SOURCE.SRTM;
+    public TILE_TYPE TileType = TILE_TYPE.Invalid;
+    public SOURCE Source = SOURCE.SRTM;
 
-        // Elevation in EGM96
-        private double elevation = 0;
-        public double Elevation
-        {
-            private get => elevation;
-            set => elevation = value;
-        }
+    // Elevation in EGM96
+    private double elevation = 0;
+    public double Elevation
+    {
+        private get => elevation;
+        set => elevation = value;
+    }
 
-        public double Lat;
-        public double Lon;
+    public double Lat;
+    public double Lon;
 
-        public double GetElevation(ELEVATION_TYPE type = ELEVATION_TYPE.ELLIPSOIDAL)
-        {
+    public double GetElevation(ELEVATION_TYPE type = ELEVATION_TYPE.ELLIPSOIDAL)
+    {
             //System.Diagnostics.Debug.WriteLine($"Undulation Legacy {UNDULATION} - Undulation Grid: {Geodetic.Geoid.GetUndulation(Lat, Lon)}");
 
             switch (type)
@@ -55,8 +56,8 @@ namespace GeodeticEngine.DTM
             //return 0;
         }
 
-        public static ElevationResponse ReturnInvalid(ElevationResponse.SOURCE _source)
-        {
+    public static ElevationResponse ReturnInvalid(ElevationResponse.SOURCE _source)
+    {
             ElevationResponse r = new ElevationResponse()
             {
                 Source = _source,
@@ -65,5 +66,4 @@ namespace GeodeticEngine.DTM
 
             return r;
         }
-    }
 }

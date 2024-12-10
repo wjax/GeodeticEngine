@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace GeodeticEngine.DTM
+namespace GeodeticEngine.DTM;
+
+public interface ElevationProviderBase
 {
-    public interface ElevationProviderBase
-    {
-        ElevationResponse GetElevation(double latitude, double longitude, bool interpolate = false);
-    }
+    ElevationResponse GetElevation(double latitude, double longitude, bool interpolate = false);
 }

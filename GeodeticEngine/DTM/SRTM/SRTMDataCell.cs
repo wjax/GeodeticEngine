@@ -1,14 +1,14 @@
 ﻿using System;
 using System.IO;
 
-namespace GeodeticEngine.DTM.SRTM
-{
-    public class SRTMDataCell
-    {
-        private short[,] Cache;
+namespace GeodeticEngine.DTM.SRTM;
 
-        internal static SRTMDataCell LoadDataCell(string filepath)
-        {
+public class SRTMDataCell
+{
+    private short[,] Cache;
+
+    internal static SRTMDataCell LoadDataCell(string filepath)
+    {
             SRTMDataCell cell = null;
             try
             {
@@ -30,8 +30,8 @@ namespace GeodeticEngine.DTM.SRTM
             return cell;
         }
 
-        private SRTMDataCell(string filepath)
-        {
+    private SRTMDataCell(string filepath)
+    {
             if (!File.Exists(filepath))
                 throw new FileNotFoundException("File not found.", filepath);
 
@@ -80,22 +80,22 @@ namespace GeodeticEngine.DTM.SRTM
 
 
 
-        #region Properties
+    #region Properties
 
-        private byte[] HgtData { get; set; }
+    private byte[] HgtData { get; set; }
 
-        private int PointsPerCell { get; set; }
+    private int PointsPerCell { get; set; }
 
-        public int Latitude { get; private set; }
+    public int Latitude { get; private set; }
 
-        public int Longitude { get; private set; }
+    public int Longitude { get; private set; }
 
-        #endregion
+    #endregion
 
-        #region Methods
+    #region Methods
 
-        private short[,] ReadFileToCache(Stream _stream)
-        {
+    private short[,] ReadFileToCache(Stream _stream)
+    {
             switch (_stream.Length)
             {
                 case 1201 * 1201 * 2: // SRTM-3
@@ -129,21 +129,21 @@ namespace GeodeticEngine.DTM.SRTM
             return cache;
         }
 
-        private float GetValue(int x, int y, float fallbackValue = float.MinValue)
-        {
+    private float GetValue(int x, int y, float fallbackValue = float.MinValue)
+    {
             if (x < PointsPerCell && y < PointsPerCell && x >= 0 && y >= 0)
                 return Cache[x, y];
             else
                 return fallbackValue;
         }
 
-        private float Average(float v1, float v2, float weight)
-        {
+    private float Average(float v1, float v2, float weight)
+    {
             return v2 * weight + v1 * (1 - weight);
         }
 
-        public ElevationResponse GetElevationBad(double latitude, double longitude)
-        {
+    public ElevationResponse GetElevationBad(double latitude, double longitude)
+    {
             int localLat = (int)((latitude - Latitude) * PointsPerCell);
             int localLon = (int)(((longitude - Longitude)) * PointsPerCell);
             int bytesPos = ((PointsPerCell - localLat - 1) * PointsPerCell * 2) + localLon * 2;
@@ -169,8 +169,8 @@ namespace GeodeticEngine.DTM.SRTM
             };
         }
 
-        public ElevationResponse GetElevation(double lat, double lon, bool interpolate)
-        {
+    public ElevationResponse GetElevation(double lat, double lon, bool interpolate)
+    {
             // Base
             int x = (int)Math.Floor(lon);
             int y = (int)Math.Floor(lat);
@@ -226,6 +226,5 @@ namespace GeodeticEngine.DTM.SRTM
 
         }
 
-        #endregion
-    }
+    #endregion
 }

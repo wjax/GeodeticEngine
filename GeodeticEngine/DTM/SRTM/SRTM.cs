@@ -6,16 +6,16 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 
-namespace GeodeticEngine.DTM.SRTM
-{
-    public class SRTM : ElevationProviderBase
-    {
-        public string DataDirectory { get; private set; }
-        private Dictionary<int, SRTMDataCell> DataCells { get; set; }
-        private List<string> SRTMFiles = new List<string>();
+namespace GeodeticEngine.DTM.SRTM;
 
-        public SRTM(string dataDirectory = "SRTM")
-        {
+public class SRTM : ElevationProviderBase
+{
+    public string DataDirectory { get; private set; }
+    private Dictionary<int, SRTMDataCell> DataCells { get; set; }
+    private List<string> SRTMFiles = new List<string>();
+
+    public SRTM(string dataDirectory = "SRTM")
+    {
             DataDirectory = Tools.MTools.AbsolutizePath(dataDirectory);
 
             if (!Directory.Exists(DataDirectory))
@@ -28,19 +28,19 @@ namespace GeodeticEngine.DTM.SRTM
             USGSSource.DownloadCompleteEvent += OnDownloadCompleted;
         }
 
-        private void OnDownloadCompleted(string localFile)
-        {
+    private void OnDownloadCompleted(string localFile)
+    {
             SRTMFiles.Add(localFile);
         }
 
-        public void Unload()
-        {
+    public void Unload()
+    {
             DataCells.Clear();
         }
 
 
-        public ElevationResponse GetElevation(double latitude, double longitude, bool interpolate = false)
-        {
+    public ElevationResponse GetElevation(double latitude, double longitude, bool interpolate = false)
+    {
             int cellLatitude = (int)Math.Floor(Math.Abs(latitude));
             if (latitude < 0)
             {
@@ -110,5 +110,4 @@ namespace GeodeticEngine.DTM.SRTM
             // return requested elevation.
             return dataCell.GetElevation(latitude, longitude, interpolate);
         }
-    }
 }

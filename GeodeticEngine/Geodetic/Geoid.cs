@@ -5,38 +5,38 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GeodeticEngine.Geodetic
+namespace GeodeticEngine.Geodetic;
+
+public static class Geoid
 {
-    public static class Geoid
+    // Based in ASC File
+    private static float[,] Cache;
+    private static int noX = 0;
+    private static int noY = 0;
+    private static double centerX = 0;
+    private static double centerY = 0;
+    private static double top = 0;
+    private static double left = 0;
+    private static int noData = -9999;
+    private static float cellSizeMeters = 0;
+    private static double cellSizeDeg = 0;
+
+    private static bool ready = false;
+    public static bool Ready { get { return ready; } }
+
+    static Geoid()
     {
-        // Based in ASC File
-        private static float[,] Cache;
-        private static int noX = 0;
-        private static int noY = 0;
-        private static double centerX = 0;
-        private static double centerY = 0;
-        private static double top = 0;
-        private static double left = 0;
-        private static int noData = -9999;
-        private static float cellSizeMeters = 0;
-        private static double cellSizeDeg = 0;
-
-        private static bool ready = false;
-        public static bool Ready { get { return ready; } }
-
-        static Geoid()
-        {
             Task.Run (() => Load());
         }
 
-        public static void Load(string path = @"GeodeticResources\egm96.asc")
-        {
+    public static void Load(string path = @"GeodeticResources\egm96.asc")
+    {
             Cache = ReadFileToCache(path);
             ready = true;
         }
 
-        private static float[,] ReadFileToCache(string filepath)
-        {
+    private static float[,] ReadFileToCache(string filepath)
+    {
             float[,] cache = null;
 
             using (FileStream fs = new FileStream(filepath, FileMode.Open, FileAccess.Read))
@@ -123,8 +123,8 @@ namespace GeodeticEngine.Geodetic
             return cache;
         }
 
-        private static float GetValue(int x, int y, float fallbackValue = float.MinValue)
-        {
+    private static float GetValue(int x, int y, float fallbackValue = float.MinValue)
+    {
             if (x < noX && y < noY && x >= 0 && y >= 0)
                 return Cache[x, y];
             else
@@ -132,8 +132,8 @@ namespace GeodeticEngine.Geodetic
         }
 
 
-        public static float GetUndulation(double lat, double lon, bool interpolate = false)
-        {
+    public static float GetUndulation(double lat, double lon, bool interpolate = false)
+    {
             if (!ready)
                 return float.MinValue;
 
@@ -167,9 +167,8 @@ namespace GeodeticEngine.Geodetic
             }
         }
 
-        private static float Average(float v1, float v2, float weight)
-        {
+    private static float Average(float v1, float v2, float weight)
+    {
             return v2 * weight + v1 * (1 - weight);
         }
-    }
 }
